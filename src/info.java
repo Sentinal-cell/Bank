@@ -1,6 +1,7 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.util.Random;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.*;
@@ -16,6 +17,7 @@ public class info implements Runnable{
         String url = "jdbc:mysql://localhost:3306/clients";
         String username = "root";
         String password = "root";
+        String fdata = null;
         try {
             System.out.println("starting");
             DataInputStream dataInputStream = new DataInputStream(client.getInputStream());
@@ -32,8 +34,8 @@ public class info implements Runnable{
             mail = mg[0];
             passw =mg[1];
             System.out.println(mail+" "+ passw);
-            String sqlQuery = "SELECT * FROM users WHERE mail = '"+mail+"' AND passw = '"+passw+"'";
-            ResultSet resultSet = statement.executeQuery(sqlQuery);
+            String chquery = "SELECT * FROM users WHERE mail = '"+mail+"' AND passw = '"+passw+"'";
+            ResultSet resultSet = statement.executeQuery(chquery);
             System.out.println("stg 2");
             boolean found = false;
             int id = 0;
@@ -59,10 +61,25 @@ public class info implements Runnable{
             if(!found){
                 dataOutputStream.writeUTF("Invalid");
             } else {
+                String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                int length = 10;
+                char[] randomString = new char[length];
+                Random random = new Random();
+                for (int i = 0; i < length; i++) {
+                    int randomIndex = random.nextInt(characters.length());
+                    randomString[i] = characters.charAt(randomIndex);
+                }
+                String sid = new String(randomString);
+                String acquery = "INSERT INTO active VALUES ('"+id+"', '"+sid+"', '"+fname+"', '"+lname+"', '"+mail+"', "+balance+", "+loan+")";
+                System.out.println(acquery);
+                System.out.println(sid);
                 dataOutputStream.writeUTF("found");
                 Thread.sleep(2000);
-                dataOutputStream.writeUTF(id+"&"+fname+"&"+lname+"&"+age+"&"+mail+"&"+passw+"&"+balance+"&"+loan);
-                System.out.println(id+"&"+fname+"&"+lname+"&"+balance+"&"+loan);
+                dataOutputStream.writeUTF("sessionid");
+                Thread.sleep(2000);
+                fdata = id+"&"+fname+"&"+lname+"&"+age+"&"+mail+"&"+passw+"&"+balance+"&"+loan;
+                dataOutputStream.writeUTF(fdata);
+                System.out.println(fdata);
             }
             System.out.println(mail);
             System.out.println(passw);
