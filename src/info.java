@@ -71,7 +71,8 @@ public class info implements Runnable{
                 }
                 String sid = new String(randomString);
                 String acquery = "INSERT INTO active VALUES ('"+id+"', '"+sid+"', '"+fname+"', '"+lname+"', '"+mail+"', "+balance+", "+loan+")";
-                System.out.println(acquery);
+                int act = statement.executeUpdate(acquery);
+                System.out.println("active table appended");
                 System.out.println(sid);
                 dataOutputStream.writeUTF("found");
                 Thread.sleep(2000);
