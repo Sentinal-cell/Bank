@@ -9,8 +9,10 @@ public class info implements Runnable{
     private Socket client;
     private String mail;
     private String passw;
-    public info(Socket client){
+    private String sid;
+    public info(Socket client, String sid){
         this.client = client;
+        this.sid = sid;
     }
     @Override
     public void run() {
@@ -76,11 +78,12 @@ public class info implements Runnable{
                 System.out.println(sid);
                 dataOutputStream.writeUTF("found");
                 Thread.sleep(2000);
-                dataOutputStream.writeUTF("sessionid");
+                dataOutputStream.writeUTF(sid);
                 Thread.sleep(2000);
-                fdata = id+"&"+fname+"&"+lname+"&"+age+"&"+mail+"&"+passw+"&"+balance+"&"+loan;
+                fdata = sid+"&"+fname+"&"+lname+"&"+mail+"&"+passw+"&"+balance+"&"+loan;
                 dataOutputStream.writeUTF(fdata);
                 System.out.println(fdata);
+                client.close();
             }
             System.out.println(mail);
             System.out.println(passw);
