@@ -31,15 +31,16 @@ public class conn {
             if (stat.equals("old")){
                 switch (type){
                     case "tran":
-                        info uinf = new info(socket, sid);
-                        Thread thread = new Thread(uinf);
+                        System.out.println("Transfer");
+                        transfer transfer = new transfer(socket, sid);
+                        Thread thread = new Thread(transfer);
+                        thread.start();
                 }
             }else{
-
-            }
             info uinf = new info(socket, sid);
             Thread thread = new Thread(uinf);
             thread.start();
+            }
         }
     }
 }

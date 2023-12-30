@@ -30,20 +30,29 @@ public class transfer implements Runnable{
             String[] rec = dataInputStream.readUTF().split("&");
             String bname = rec[0];
             String rmail = rec[1];
-            String query1 = "SELECT fname, lname FROM users WHERE mail='"+rmail+"'";
+            System.out.println(bname);
+            System.out.println(rmail);
+            String query1 = "SELECT * FROM users WHERE mail='"+rmail+"'";
+            ResultSet resultSet = statement.executeQuery(query1);
             String fname = null;
             String lname = null;
             switch (bname){
                 case "bank":
-                    ResultSet resultSet = statement.executeQuery(query1);
+                System.out.println("bcase");
                     while(resultSet.next()){
                         fname = resultSet.getString("fname");
                         lname = resultSet.getString("lname");
+                        System.out.println(fname+" "+lname);
                         dataOutputStream.writeUTF(fname+"&"+lname);
+                        ftran ftran = new ftran(client, sid, passw);
+                        Thread thread = new Thread(ftran);
+                        thread.start();
+                        break;
                     }
             }
         } catch (Exception e){
             e.printStackTrace();
         }
+        
     }
 }

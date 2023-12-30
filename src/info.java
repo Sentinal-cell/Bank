@@ -62,6 +62,7 @@ public class info implements Runnable{
             System.out.println(fname + lname);
             if(!found){
                 dataOutputStream.writeUTF("Invalid");
+                client.close();
             } else {
                 String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 int length = 10;
@@ -82,8 +83,9 @@ public class info implements Runnable{
                 Thread.sleep(2000);
                 fdata = sid+"&"+fname+"&"+lname+"&"+mail+"&"+passw+"&"+balance+"&"+loan;
                 dataOutputStream.writeUTF(fdata);
-                System.out.println(fdata);
                 client.close();
+                System.out.println(fdata);
+                connection.close();
             }
             System.out.println(mail);
             System.out.println(passw);
