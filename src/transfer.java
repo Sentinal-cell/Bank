@@ -10,6 +10,9 @@ public class transfer implements Runnable{
     private String mail;
     private String passw;
     private String sid;
+    private String rmail;
+    private Connection connection;
+    private Statement statement;
     public transfer(Socket client, String sid){
         this.client = client;
         this.sid = sid;
@@ -25,11 +28,11 @@ public class transfer implements Runnable{
             DataInputStream dataInputStream = new DataInputStream(client.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(client.getOutputStream());
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, username, password);
-            Statement statement = connection.createStatement();
+            connection = DriverManager.getConnection(url, username, password);
+            statement = connection.createStatement();
             String[] rec = dataInputStream.readUTF().split("&");
             String bname = rec[0];
-            String rmail = rec[1];
+            rmail = rec[1];
             System.out.println(bname);
             System.out.println(rmail);
             String query1 = "SELECT * FROM users WHERE mail='"+rmail+"'";

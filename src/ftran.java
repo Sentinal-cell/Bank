@@ -9,6 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 public class ftran implements Runnable{
+    private int fbal;
+    private int rbal;
     private Socket client;
     private String sid;
     private String receiver;
@@ -36,8 +38,8 @@ public class ftran implements Runnable{
             System.out.println("5 minutes is up! session ended");
             tup = true;
             scheduler.shutdown();
-            scheduler.shutdown();
-        }, 5, TimeUnit.MINUTES
+            System.exit(0);
+        }, 10, TimeUnit.MINUTES
             );
         try{
             dataInputStream = new DataInputStream(client.getInputStream());
@@ -64,15 +66,50 @@ public class ftran implements Runnable{
                 passw = resultSet.getString("passw");
                 balance = resultSet.getInt("balance");
                 loan = resultSet.getInt("loan");
+            }
             while(!tup){
                 tr=dataInputStream.readUTF().split("&");
                 tup = true;
+            //query1 = "SELECT value1, value2, (value1 + value2) AS sum FROM numbers";
             }
             receiver = tr[0];
             amount = Integer.parseInt(tr[1]);
             sender = tr[2];
-            query1 = "SELECT value1, value2, (value1 + value2) AS sum FROM numbers";
+            String rsid = null;
+            String rfname = null;
+            String rlname =null;
+            int rage = 0;
+            String rmail = null;
+            String rpassw = null;
+            int rbalance = 0;
+            int rloan = 0;
+            while(resultSet.next()){
+                found = true;
+                rsid = resultSet.getString("id");
+                rfname = resultSet.getString("fname");
+                rlname = resultSet.getString("lname");
+                rmail = resultSet.getString("mail");
+                rpassw = resultSet.getString("passw");
+                rbalance = resultSet.getInt("balance");
+                rloan = resultSet.getInt("loan");
             }
+            if (amount <= balance){
+                fbal = balance - amount;
+                rbal = rbalance + amount;
+            }
+            String upquer = "UPDATE users SET balance="+fbal+"";
+            try{
+                statement.executeUpdate(upquer);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            String upquer2 = "UPDATE users SET balance="+rbal+" WHERE mail='"+receiver+"'";
+            try{
+                statement.executeUpdate(upquer2);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            System.exit(0);
         }catch(Exception e){
             e.printStackTrace();
         }
