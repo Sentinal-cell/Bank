@@ -71,7 +71,6 @@ public class ftran implements Runnable{
                 tr=dataInputStream.readUTF().split("&");
                 tup = true;
             //query1 = "SELECT value1, value2, (value1 + value2) AS sum FROM numbers";
-            }
             receiver = tr[0];
             amount = Integer.parseInt(tr[1]);
             sender = tr[2];
