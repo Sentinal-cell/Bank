@@ -108,7 +108,6 @@ public class ftran implements Runnable{
             }catch(Exception e){
                 e.printStackTrace();
             }
-            System.exit(0);
         }catch(Exception e){
             e.printStackTrace();
         }
