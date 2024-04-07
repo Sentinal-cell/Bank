@@ -32,6 +32,7 @@ public class conn {
                 switch (type){
                     case "tran":
                         System.out.println("Transfer");
+                        System.out.println(sid);
                         transfer transfer = new transfer(socket, sid);
                         Thread thread = new Thread(transfer);
                         thread.start();

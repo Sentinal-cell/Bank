@@ -1,5 +1,6 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Random;
 import java.net.URL;
@@ -9,9 +10,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 public class ftran implements Runnable{
-    private int fbal;
+    private int sbal;
     private int rbal;
-    private Socket client;
+    public Socket client;
+    private String bank;
     private String sid;
     private String receiver;
     private int amount;
@@ -21,11 +23,12 @@ public class ftran implements Runnable{
     private String rec;
     private String query1;
     private String query2;
-    private boolean tup = false;
-    public ftran(Socket client, String sid, String rec){
+    private boolean tup = true;
+    public ftran(Socket client, String sid, String rec, String bank){
         this.client = client;
         this.sid = sid;
         this.rec = rec;
+        this.bank = bank;
     }
     @Override
     public void run(){
@@ -38,7 +41,12 @@ public class ftran implements Runnable{
             System.out.println("5 minutes is up! session ended");
             tup = true;
             scheduler.shutdown();
-            System.exit(0);
+            try {
+                client.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }, 10, TimeUnit.MINUTES
             );
         try{
@@ -47,6 +55,7 @@ public class ftran implements Runnable{
             Connection connection = DriverManager.getConnection(url, username, password);
             Statement statement = connection.createStatement();
             String query1 = "SELECT * FROM active WHERE sid='"+sid+"'";
+            System.out.println(sid);
             ResultSet resultSet = statement.executeQuery(query1);
             boolean found = false;
             String sid = null;
@@ -54,8 +63,7 @@ public class ftran implements Runnable{
             String lname =null;
             int age = 0;
             String mail = null;
-            String passw = null;
-            int balance = 0;
+            int sbalance = 0;
             int loan = 0;
             while(resultSet.next()){
                 found = true;
@@ -63,13 +71,13 @@ public class ftran implements Runnable{
                 fname = resultSet.getString("fname");
                 lname = resultSet.getString("lname");
                 mail = resultSet.getString("mail");
-                passw = resultSet.getString("passw");
-                balance = resultSet.getInt("balance");
+                sbalance = resultSet.getInt("balance");
                 loan = resultSet.getInt("loan");
             }
-            while(!tup){
-                tr=dataInputStream.readUTF().split("&");
-                tup = true;
+            System.out.println(fname+sbalance);
+            tr=dataInputStream.readUTF().split("&");
+            System.out.println(tr[0]);
+        
             //query1 = "SELECT value1, value2, (value1 + value2) AS sum FROM numbers";
             receiver = tr[0];
             amount = Integer.parseInt(tr[1]);
@@ -92,11 +100,12 @@ public class ftran implements Runnable{
                 rbalance = resultSet.getInt("balance");
                 rloan = resultSet.getInt("loan");
             }
-            if (amount <= balance){
-                fbal = balance - amount;
+            if (amount <= sbalance){
+                sbal = sbalance - amount;
                 rbal = rbalance + amount;
             }
-            String upquer = "UPDATE users SET balance="+fbal+"";
+            String upquer = "UPDATE users SET balance="+sbal+" WHERE mail='"+mail+"'";
+            System.out.println(amount+"&"+sbalance);
             try{
                 statement.executeUpdate(upquer);
             }catch(Exception e){
@@ -105,6 +114,16 @@ public class ftran implements Runnable{
             String upquer2 = "UPDATE users SET balance="+rbal+" WHERE mail='"+receiver+"'";
             try{
                 statement.executeUpdate(upquer2);
+                String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                int length = 10;
+                char[] randomString = new char[length];
+                Random random = new Random();
+                for (int i = 0; i < length; i++) {
+                    int randomIndex = random.nextInt(characters.length());
+                    randomString[i] = characters.charAt(randomIndex);
+                }
+                String tid = new String(randomString);
+                String update = "INSERT INTO Transactions (tid, Date, Sender, Receiver, Rbank, Amount) VALUES ('"+tid+"', '"+tid+"', '"+mail+"', '"+rmail+"', '"+bank+"', "+amount+")";
             }catch(Exception e){
                 e.printStackTrace();
             }

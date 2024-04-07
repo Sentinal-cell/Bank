@@ -11,6 +11,7 @@ public class transfer implements Runnable{
     private String passw;
     private String sid;
     private String rmail;
+    private String rb;
     private Connection connection;
     private Statement statement;
     public transfer(Socket client, String sid){
@@ -41,13 +42,14 @@ public class transfer implements Runnable{
             String lname = null;
             switch (bname){
                 case "bank":
+                String rbname = "bank";
                 System.out.println("bcase");
                     while(resultSet.next()){
                         fname = resultSet.getString("fname");
                         lname = resultSet.getString("lname");
                         System.out.println(fname+" "+lname);
                         dataOutputStream.writeUTF(fname+"&"+lname);
-                        ftran ftran = new ftran(client, sid, passw);
+                        ftran ftran = new ftran(client, sid, passw, rbname);
                         Thread thread = new Thread(ftran);
                         thread.start();
                         break;
