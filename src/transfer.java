@@ -25,7 +25,7 @@ public class transfer implements Runnable{
         String password = "root";
         String fdata = null;
         try {
-            System.out.println("starting...");
+            System.out.println("starting transfer session...");
             DataInputStream dataInputStream = new DataInputStream(client.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(client.getOutputStream());
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -34,8 +34,8 @@ public class transfer implements Runnable{
             String[] rec = dataInputStream.readUTF().split("&");
             String bname = rec[0];
             rmail = rec[1];
-            System.out.println(bname);
-            System.out.println(rmail);
+            System.out.println("receiver mail: "+rmail);
+            System.out.println("receiver bank: "+rmail);
             String query1 = "SELECT * FROM users WHERE mail='"+rmail+"'";
             ResultSet resultSet = statement.executeQuery(query1);
             String fname = null;
@@ -47,7 +47,7 @@ public class transfer implements Runnable{
                     while(resultSet.next()){
                         fname = resultSet.getString("fname");
                         lname = resultSet.getString("lname");
-                        System.out.println(fname+" "+lname);
+                        System.out.println("receiver is "+fname +" "+lname);
                         dataOutputStream.writeUTF(fname+"&"+lname);
                         ftran ftran = new ftran(client, sid, passw, rbname);
                         Thread thread = new Thread(ftran);
@@ -61,3 +61,4 @@ public class transfer implements Runnable{
         
     }
 }
+

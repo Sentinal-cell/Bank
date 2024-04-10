@@ -9,36 +9,35 @@ public class conn {
     private static int port;
     private static String inf;
     private static String[] minf;
-    private static String stat;
-    private static String sid;
+    private static String status;
+    private static String session_id;
     private static String type;
     public static void main(String[] args) throws Exception {
         ip = "172.20.144.1";
         port = 3333;
         InetAddress localhost = InetAddress.getLocalHost();
-        System.out.println("Your local IP address: " + localhost.getHostAddress());
+        System.out.println("Server is running on :" + localhost.getHostAddress()+":"+port);
         InetAddress addr = InetAddress.getByName(localhost.getHostAddress());
         ServerSocket serverSocket = new ServerSocket(port, 50, addr);
         while (true) {
             Socket socket = serverSocket.accept();
-            System.out.println(socket.getInetAddress());
+            System.out.println("Client ip:" +socket.getInetAddress());
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-            inf = dataInputStream.readUTF();
-            minf = inf.split("&");
-            stat = minf[0];
-            sid = minf[1];
+            minf = dataInputStream.readUTF().split("&");
+            status = minf[0];
+            session_id = minf[1];
             type = minf[2];
-            if (stat.equals("old")){
+            if (status.equals("old")){
+                System.out.println("Client is old");
                 switch (type){
                     case "tran":
-                        System.out.println("Transfer");
-                        System.out.println(sid);
-                        transfer transfer = new transfer(socket, sid);
+                        System.out.println("Type: Transfer");
+                        transfer transfer = new transfer(socket, session_id);
                         Thread thread = new Thread(transfer);
                         thread.start();
                 }
             }else{
-            info uinf = new info(socket, sid);
+            user_information uinf = new user_information(socket);
             Thread thread = new Thread(uinf);
             thread.start();
             }
