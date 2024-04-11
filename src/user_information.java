@@ -71,7 +71,17 @@ public class user_information implements Runnable{
                 String sid = new String(randomString);
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 String active_update = "INSERT INTO active VALUES ('"+id+"', '"+sid+"', '"+fname+"', '"+lname+"', '"+mail+"', "+balance+", "+loan+", '"+timestamp+"')";
+                String del_id = "DELETE FROM active WHERE mail='"+mail+"'";
+                try{
                 statement.executeUpdate(active_update);
+                }catch (SQLException e){
+                    if (e instanceof java.sql.SQLIntegrityConstraintViolationException){
+                        statement.executeUpdate(del_id);
+                        try{
+                            statement.executeUpdate(active_update);
+                            }catch (SQLException z){}
+                    }
+                }
                 System.out.println("active table appended");
                 System.out.println("Sending data to client...");
                 dataOutputStream.writeUTF("success");

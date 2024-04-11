@@ -15,10 +15,10 @@ public class encryption {
             while (rs.next()) {
                 password = rs.getString("passw");
             }
-            return password.equals(hash); // Correctly compare strings
+            return password.equals(hash);
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Return false in case of SQL exception
+            return false;
         }
     }
 }

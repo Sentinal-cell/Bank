@@ -55,7 +55,7 @@ public class ftran implements Runnable{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
             Statement statement = connection.createStatement();
-            Statement statement2 = connection.createStatement();
+            //Statement statement2 = connection.createStatement();
             System.out.println(session_id);
             String check_mail = "SELECT * FROM active WHERE sid='"+session_id+"'";
             ResultSet resultSet = statement.executeQuery(check_mail);
@@ -74,7 +74,6 @@ public class ftran implements Runnable{
             System.out.println("fetching sender info from DB...");
             String fetch = "SELECT * FROM users WHERE mail='"+mail+"'";
             ResultSet resultSet2 = statement.executeQuery(fetch);
-            System.out.println("done");
             while (resultSet2.next()){
                 sid = resultSet2.getString("id");
                 fname = resultSet2.getString("fname");
@@ -82,14 +81,12 @@ public class ftran implements Runnable{
                 sbalance = resultSet2.getInt("balance");
                 loan = resultSet2.getInt("loan");
             }
-            System.out.println("done");
             resultSet2.close();
             tr=dataInputStream.readUTF().split("&");
             System.out.println("receiver: "+tr[0]);
             receiver = tr[0];
             amount = Integer.parseInt(tr[1]);
             sender = tr[2];
-            System.out.println(sender);
             String query = "SELECT * FROM users WHERE mail='"+receiver+"'";
             String rfname = null;
             String rlname =null;
@@ -109,7 +106,6 @@ public class ftran implements Runnable{
                 rbal = rbalance + amount;
                 String upquer = "UPDATE users SET balance="+sbal+" WHERE mail='"+mail+"'";
                 String upquer2 = "UPDATE users SET balance="+rbal+" WHERE mail='"+receiver+"'";
-                System.out.println(amount+"&"+sbalance);
                 try{
                     System.out.println("Updating users table");
                     statement.executeUpdate(upquer);
@@ -136,7 +132,7 @@ public class ftran implements Runnable{
                 dataOutputStream.writeUTF(mail +"&"+ rmail+"&"+ status +"&"+amt + "&"+timestamp+"&"+tid);
                 String update_transaction = "INSERT INTO Transactions (tid, Date, Sender, Receiver, Rbank, Amount) VALUES ('"+tid+"', '"+timestamp+"', '"+mail+"', '"+rmail+"', '"+rbank+"', "+amount+")";
                 System.out.println("Updating transactions table");
-                statement2.executeUpdate(update_transaction);
+                statement.executeUpdate(update_transaction);
                 connection.close();
             }catch(Exception e){
                 e.printStackTrace();
