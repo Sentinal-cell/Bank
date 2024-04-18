@@ -1,9 +1,6 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
-import java.util.Random;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.*;
 public class transfer implements Runnable{
     private Socket client;
