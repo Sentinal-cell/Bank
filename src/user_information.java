@@ -5,11 +5,14 @@ import java.util.Random;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 public class user_information implements Runnable{
     private Socket client;
     private String mail;
     private String passw;
     private boolean state;
+    private static final Logger logger = LogManager.getLogger(user_information.class);
     public user_information(Socket client){
         this.client = client;
     }
@@ -20,7 +23,7 @@ public class user_information implements Runnable{
         String password = "root";
         String fdata = null;
         try {
-            System.out.println("Fetching user data...");
+            logger.info("Fetching user data...");
             DataInputStream dataInputStream = new DataInputStream(client.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(client.getOutputStream());
             String jarFilePath = "lib/mysql-connector-j-8.1.0.jar";
@@ -31,15 +34,15 @@ public class user_information implements Runnable{
             Connection connection = DriverManager.getConnection(url, username, password);
             Statement statement = connection.createStatement();
             String[] mg = dataInputStream.readUTF().split("&");
-            System.out.println("Checking user information...");
+            logger.info("Checking user information...");
             mail = mg[0];
             passw =mg[1];
             encryption encr = new encryption();
             state = encr.check(mail, passw);
             if (state){
-                System.out.println("username and password correct...");
+                logger.info("username and password correct...");
                 String fetch_query = "SELECT * FROM users WHERE mail = '"+mail+"' AND passw = '"+passw+"'";
-                System.out.println("Fetching user data from DB...");
+                logger.info("Fetching user data from DB...");
                 ResultSet resultSet = statement.executeQuery(fetch_query);
                 int id = 0;
                 String fname = null;
@@ -50,7 +53,7 @@ public class user_information implements Runnable{
                 int balance = 0;
                 int loan = 0;
                 while(resultSet.next()){
-                    System.out.println("user info fetch successfully");
+                    logger.info("user info fetch was a success");
                     id = resultSet.getInt("id");
                     fname = resultSet.getString("fname");
                     lname = resultSet.getString("lname");
@@ -59,7 +62,7 @@ public class user_information implements Runnable{
                     balance = resultSet.getInt("balance");
                     loan = resultSet.getInt("loan");
                 }
-                System.out.println("creating session id...");
+                logger.info("creating session id...");
                 String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 int length = 10;
                 char[] randomString = new char[length];
@@ -79,31 +82,31 @@ public class user_information implements Runnable{
                         statement.executeUpdate(del_id);
                         try{
                             statement.executeUpdate(active_update);
-                            }catch (SQLException z){}
+                            }catch (SQLException z){logger.error("Error: {}", z.getMessage());}
                     }
                 }
-                System.out.println("active table appended");
-                System.out.println("Sending data to client...");
+                logger.info("active table appended");
+                logger.info("Sending data to client...");
                 dataOutputStream.writeUTF("success");
                 Thread.sleep(2000);
                 dataOutputStream.writeUTF(sid);
                 Thread.sleep(2000);
                 fdata = sid+"&"+fname+"&"+lname+"&"+mail+"&"+passw+"&"+balance+"&"+loan;
                 dataOutputStream.writeUTF(fdata);
-                System.out.println("Data sent...");
+                logger.info("Data sent...");
                 client.close();
                 connection.close();
-                System.out.println("Connection closed...");
+                logger.info("Connection closed...");
             }
             else{
                 dataOutputStream.writeUTF("Invalid");
-                System.out.println("Client used wrong usrname or password...");
+                logger.info("Client used wrong usrname or password...");
                 client.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error: {}", e.getMessage());
         }catch(Exception e){
-            e.printStackTrace();
+            logger.error("Error: {}", e.getMessage());
         }
     }
 }
