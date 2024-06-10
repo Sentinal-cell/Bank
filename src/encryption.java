@@ -1,8 +1,9 @@
 import java.sql.*;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 public class encryption {
     private String password;
-
+    private static final Logger logger = LogManager.getLogger(records.class);
     public boolean check(String mail, String hash) {
         String url = "jdbc:mysql://localhost:3306/clients";
         String username = "root";
@@ -17,7 +18,7 @@ public class encryption {
             }
             return password.equals(hash);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error: {}", e.getMessage());
             return false;
         }
     }
