@@ -2,6 +2,8 @@ import java.net.Socket;
 import java.sql.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 public class alert_check implements Runnable{
     String session_id;
     Socket client;
@@ -13,6 +15,7 @@ public class alert_check implements Runnable{
 
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
+    private static final Logger logger = LogManager.getLogger(alert_check.class);
     public alert_check(Socket client, String session_id){
         this.client = client;
         this.session_id = session_id;
@@ -46,7 +49,9 @@ public class alert_check implements Runnable{
                 String query3 = "update transactions set rec_conf='true' where receiver='"+mail+"'";
             statement.executeUpdate(query3);
             }else{dataOutputStream.writeUTF("false");}
-        }catch(Exception e){e.printStackTrace();}
+        }catch(Exception e){
+            logger.error("Error: {}", e.getMessage());
+        }
         }
 }
 ;
