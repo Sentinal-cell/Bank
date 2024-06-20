@@ -8,7 +8,6 @@ public class encryption {
         String url = "jdbc:mysql://localhost:3306/clients";
         String username = "root";
         String dbpassword = "root";
-        
         try (Connection connection = DriverManager.getConnection(url, username, dbpassword);
              Statement statement = connection.createStatement()) {
             String query = "SELECT passw FROM users WHERE mail='" + mail + "'";
