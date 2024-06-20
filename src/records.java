@@ -6,7 +6,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-public class records implements Runnable{
+
+public class records implements Runnable {
     private String sender;
     private String receiver;
     private String tid;
@@ -20,14 +21,16 @@ public class records implements Runnable{
     private String mail;
     private String path = "users_tran/";
     private String filepath;
-    private int counter =0;
+    private int counter = 0;
     private static final Logger logger = LogManager.getLogger(records.class);
-    public records(Socket client, String session_id){
+
+    public records(Socket client, String session_id) {
         this.client = client;
         this.session_id = session_id;
     }
+
     @Override
-    public void run(){
+    public void run() {
         String url = "jdbc:mysql://localhost:3306/clients";
         String username = "root";
         String password = "root";
@@ -39,21 +42,21 @@ public class records implements Runnable{
             int randomIndex = random.nextInt(characters.length());
             randomString[i] = characters.charAt(randomIndex);
         }
-        String filepath = path + new String(randomString)+".txt";
+        String filepath = path + new String(randomString) + ".txt";
         System.out.println(filepath);
-        try{
-            logger.info("checking records for sid: {}",session_id);
+        try {
+            logger.info("checking records for sid: {}", session_id);
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, username, password);
             statement = connection.createStatement();
-            String query = "select mail from active where sid='"+session_id+"'";
+            String query = "select mail from active where sid='" + session_id + "'";
             ResultSet resultSet = statement.executeQuery(query);
-            while(resultSet.next()) {
-                mail= resultSet.getString("mail");
+            while (resultSet.next()) {
+                mail = resultSet.getString("mail");
             }
-            String query1 = "select * from transactions where sender='"+mail+"' or receiver='"+mail+"'";
+            String query1 = "select * from transactions where sender='" + mail + "' or receiver='" + mail + "'";
             ResultSet resultSet2 = statement.executeQuery(query1);
-            while(resultSet2.next()){
+            while (resultSet2.next()) {
                 counter++;
                 sender = resultSet2.getString("sender");
                 receiver = resultSet2.getString("receiver");
@@ -61,33 +64,31 @@ public class records implements Runnable{
                 amount = resultSet2.getInt("amount");
                 date = resultSet2.getString("date");
                 rbank = resultSet2.getString("rbank");
-                String record = counter +", "+sender +", "+ receiver +", "+ tid +", "+amount +", "+date +", "+rbank;
-                //logger.info(record);
+                String record = tid + ", " + sender + ", " + receiver + ", " + amount + ", " + date + ", " + rbank;
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
                     writer.write(record);
                     writer.newLine();
                 }
             }
             logger.info("All records retrieved...");
-          //  FileInputStream fileInputStream = new FileInputStream("records_transfer."\);
+            // FileInputStream fileInputStream = new FileInputStream("records_transfer."\);
             DataOutputStream dout = new DataOutputStream(client.getOutputStream());
             BufferedReader in = new BufferedReader(new FileReader(filepath));
             String line;
             while ((line = in.readLine()) != null) {
-                    dout.writeUTF(line);
-                    dout.flush();
-                    Thread.sleep(500);
+                dout.writeUTF(line);
+                dout.flush();
+                Thread.sleep(500);
             }
             in.close();
             dout.writeUTF("end");
             dout.flush();
-            System.out.println("done");
             File fileToDelete = new File(filepath);
             fileToDelete.delete();
             client.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("Error: {}", e.getMessage());
         }
     }
-    
+
 }

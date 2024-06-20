@@ -115,7 +115,7 @@ public class user_information implements Runnable {
                     Thread.sleep(1000);
                     dataOutputStream.write(pp);
                 } else {
-                    logger.info("there is no picture");
+                    logger.info("profile picture sent");
                 }
                 logger.info("Data sent...");
                 client.close();
