@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-#start
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
