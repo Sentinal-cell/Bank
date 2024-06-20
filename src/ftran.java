@@ -40,7 +40,7 @@ public class ftran implements Runnable {
 
     @Override
     public void run() {
-        String url = "jdbc:mysql://localhost:3306/clients";
+        String url = "jdbc:postgresql://localhost:5432/clients";
         String username = "root";
         String password = "root";
         logger.info("session timer started...");
