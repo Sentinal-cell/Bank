@@ -117,10 +117,14 @@ public class user_information implements Runnable {
                 } else {
                     logger.info("profile picture sent");
                 }
-                logger.info("Data sent...");
-                client.close();
-                connection.close();
-                logger.info("Connection closed...");
+                if (dataInputStream != null)
+                    dataInputStream.close();
+                if (dataOutputStream != null)
+                    dataOutputStream.close();
+                if (connection != null)
+                    connection.close();
+                if (client != null)
+                    client.close();
             } else {
                 dataOutputStream.writeUTF("Invalid");
                 logger.info("Client used wrong usrname or password...");
