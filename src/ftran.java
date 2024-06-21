@@ -11,7 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.concurrent.TimeUnit;
-
+//hhjj
 public class ftran implements Runnable {
     private static int sbal;
     private static int rbal;
