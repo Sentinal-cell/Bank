@@ -21,9 +21,9 @@ public class user_information implements Runnable {
 
     @Override
     public void run() {
-        String url = "jdbc:mysql://localhost:3306/clients";
-        String username = "root";
-        String password = "root";
+        String url = "jdbc:mysql://localhost:1433/clients";
+        String username = "server";
+        String password = "server";
         String fdata = null;
         try {
             logger.info("Fetching user data...");

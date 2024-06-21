@@ -7,9 +7,9 @@ public class encryption {
     private static final Logger logger = LogManager.getLogger(records.class);
 
     public boolean check(String mail, String hash) {
-        String url = "jdbc:mysql://localhost:3306/clients";
-        String username = "root";
-        String dbpassword = "root";
+        String url = "jdbc:mysql://localhost:1433/clients";
+        String username = "server";
+        String dbpassword = "server";
         try (Connection connection = DriverManager.getConnection(url, username, dbpassword);
                 Statement statement = connection.createStatement()) {
             String query = "SELECT passw FROM users WHERE mail='" + mail + "'";

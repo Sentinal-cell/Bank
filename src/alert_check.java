@@ -26,9 +26,9 @@ public class alert_check implements Runnable {
     @Override
     public void run() {
         String status = "successful";
-        String url = "jdbc:mysql://localhost:3306/clients";
-        String username = "root";
-        String password = "root";
+        String url = "jdbc:mysql://localhost:1433/clients";
+        String username = "server";
+        String password = "server";
         String query1 = "SELECT mail FROM active WHERE sid='" + session_id + "'";
         try {
             dataInputStream = new DataInputStream(client.getInputStream());

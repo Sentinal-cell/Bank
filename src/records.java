@@ -2,8 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Random;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,9 +30,9 @@ public class records implements Runnable {
 
     @Override
     public void run() {
-        String url = "jdbc:postgresql://localhost:5432/clients";
-        String username = "root";
-        String password = "root";
+        String url = "jdbc:mysql://localhost:1433/clients";
+        String username = "server";
+        String password = "server";
         String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         int length = 10;
         char[] randomString = new char[length];
