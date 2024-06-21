@@ -1,10 +1,15 @@
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 public class conn {
     private static String ip;
     private static int port;
@@ -14,14 +19,13 @@ public class conn {
     private static String session_id;
     private static String type;
     private static final Logger logger = LogManager.getLogger(conn.class);
+
     public static void main(String[] args) throws Exception {
-        ip = "172.20.144.1";
         port = 3333;
-        InetAddress localhost = InetAddress.getLocalHost();
-        logger.info("Server is running on : {}:{}", localhost.getHostAddress(), port);
-        InetAddress addr = InetAddress.getByName(localhost.getHostAddress());
-        ServerSocket serverSocket = new ServerSocket(port, 50, addr);
         while (true) {
+            InetAddress addr = InetAddress.getByName("0.0.0.0");
+            ServerSocket serverSocket = new ServerSocket(port, 50, addr);
+            logger.info("Server is running on : {}:{}", addr.getHostAddress(), port);
             Socket socket = serverSocket.accept();
             logger.info("new connection...");
             logger.info("client ip: {}", socket.getInetAddress());
@@ -30,9 +34,9 @@ public class conn {
             status = minf[0];
             session_id = minf[1];
             type = minf[2];
-            if (status.equals("old")){
+            if (status.equals("old")) {
                 logger.info("Client is old...");
-                switch (type){
+                switch (type) {
                     case "tran":
                         logger.info("Type: Transfer");
                         transfer transfer = new transfer(socket, session_id);
@@ -41,22 +45,27 @@ public class conn {
                         break;
                     case "alerts":
                         logger.info("Type: Alerts");
-                        alert_check alert_check= new alert_check(socket, session_id);
+                        alert_check alert_check = new alert_check(socket, session_id);
                         Thread thread2 = new Thread(alert_check);
                         thread2.start();
                         break;
-                    case "records":
-                    System.out.println(type);
-                        logger.info("Type: Records");
-                        records records = new records(socket, session_id);
-                        Thread thread3 = new Thread(records);
+                    case "empty":
+                        user_information uinf = new user_information(socket);
+                        Thread thread3 = new Thread(uinf);
                         thread3.start();
                         break;
+                    case "records":
+                        logger.info("Type: Records");
+                        records records = new records(socket, session_id);
+                        Thread thread4 = new Thread(records);
+                        thread4.start();
+                        break;
                 }
-            }else{
-            user_information uinf = new user_information(socket);
-            Thread thread = new Thread(uinf);
-            thread.start();
+            } else {
+                logger.info("Type: Signup");
+                signup signup = new signup(socket);
+                Thread thread5 = new Thread(signup);
+                thread5.start();
             }
         }
     }

@@ -64,9 +64,7 @@ public class records implements Runnable {
                 amount = resultSet2.getInt("amount");
                 date = resultSet2.getString("date");
                 rbank = resultSet2.getString("rbank");
-                String record = counter + ", " + sender + ", " + receiver + ", " + tid + ", " + amount + ", " + date
-                        + ", " + rbank;
-                // logger.info(record);
+                String record = tid + ", " + sender + ", " + receiver + ", " + amount + ", " + date + ", " + rbank;
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
                     writer.write(record);
                     writer.newLine();
