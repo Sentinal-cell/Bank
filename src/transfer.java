@@ -23,7 +23,7 @@ public class transfer implements Runnable {
 
     @Override
     public void run() {
-        String url = "jdbc:mysql://localhost:3306/clients";
+        String url = "jdbc:mysql://localhost:1433/clients";
         String username = "root";
         String password = "root";
         String fdata = null;
