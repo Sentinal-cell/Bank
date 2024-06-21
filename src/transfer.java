@@ -24,8 +24,8 @@ public class transfer implements Runnable {
     @Override
     public void run() {
         String url = "jdbc:mysql://localhost:1433/clients";
-        String username = "ahmad";
-        String password = "ahmad";
+        String username = "server";
+        String password = "server";
         String fdata = null;
         try {
             logger.info("starting transfer session...");
